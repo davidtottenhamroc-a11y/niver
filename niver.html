@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Niver do meu sol ☀️</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Playfair+Display&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Playfair Display', serif;
+            background: linear-gradient(135deg, #ffd700, #ffa500); /* Amarelo ouro para laranja */
+            color: #5a3d00; /* Marrom escuro para contraste */
+            margin: 0;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        header h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3.5rem;
+            margin-bottom: 0;
+            color: #ff8c00; /* Laranja escuro */
+        }
+
+        header p {
+            font-size: 1.2rem;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        .gallery-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 30px 0;
+            position: relative;
+        }
+
+        .image-wrapper {
+            position: relative;
+        }
+
+        #gallery-image {
+            max-width: 100%;
+            height: auto;
+            border: 8px solid white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .caption {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-style: italic;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .image-wrapper:hover .caption {
+            opacity: 1;
+        }
+
+        .nav-button {
+            background-color: #ff8c00; /* Laranja escuro */
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            font-size: 2rem;
+            cursor: pointer;
+            margin: 0 15px;
+            transition: background-color 0.3s, transform 0.3s;
+            line-height: 45px;
+        }
+
+        .nav-button:hover {
+            background-color: #e67e00; /* Laranja mais escuro */
+            transform: scale(1.1);
+        }
+
+        .poem-section, .surprise-section {
+            margin: 40px 0;
+        }
+
+        #poem-button, #surprise-button {
+            font-family: 'Playfair Display', serif;
+            background-color: #ff8c00; /* Laranja escuro */
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        #poem-button:hover, #surprise-button:hover {
+            background-color: #e67e00; /* Laranja mais escuro */
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+        }
+
+        .surprise-message {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fffacd; /* Amarelo claro */
+            border: 2px dashed #ffb347; /* Laranja pastel */
+            border-radius: 15px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.6);
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.5s;
+        }
+
+        .modal-content {
+            background-color: #fff8dc; /* Creme */
+            margin: auto;
+            padding: 30px;
+            border: 5px solid #ffecb3; /* Amarelo bem claro */
+            border-radius: 20px;
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 5px 25px rgba(255, 140, 0, 0.4); /* Sombra laranja */
+        }
+
+        .close-button {
+            color: #ff8c00; /* Laranja escuro */
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        #poem-text {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            white-space: pre-wrap;
+        }
+
+        #poem-author {
+            display: block;
+            margin-top: 20px;
+            font-size: 1.1rem;
+            font-style: italic;
+            color: #e67e00; /* Laranja mais escuro */
+        }
+
+        #next-poem-button {
+            margin-top: 20px;
+            background-color: transparent;
+            border: 2px solid #ff8c00; /* Laranja escuro */
+            color: #ff8c00; /* Laranja escuro */
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        #next-poem-button:hover {
+            background-color: #ff8c00; /* Laranja escuro */
+            color: white;
+        }
+
+        footer {
+            margin-top: 30px;
+            font-style: italic;
+            font-size: 1rem;
+        }
+
+        .heart {
+            position: fixed;
+            top: -10vh;
+            font-size: 1.5rem;
+            animation: fall 10s linear infinite;
+            z-index: -1;
+            color: #fdd835; /* Amarelo vibrante para os corações */
+            opacity: 0.8;
+        }
+        
+        /* ESTILOS PARA A TELA DE ENTRADA DA MÚSICA */
+        #music-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ffd700, #ffa500);
+            z-index: 200;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            flex-direction: column;
+            text-align: center;
+            transition: opacity 0.5s ease-out;
+        }
+
+        #music-overlay h2 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3rem;
+            color: white;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+        }
+
+        #music-overlay p {
+            font-size: 1.2rem;
+            color: white;
+            margin-top: -10px;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(110vh); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="music-overlay">
+        <h2>Feliz Aniversário!</h2>
+        <p>Clique para uma surpresa ❤️</p>
+    </div>
+
+    <div id="player" style="display: none;"></div>
+
+
+    <div class="container">
+        <header>
+            <h1>Nosso Amor</h1>
+            <p>Feliz anivésário Vida 🎉, +1,...</p>
+        </header>
+
+        <main>
+            <div class="gallery-container">
+                <button class="nav-button" id="prev-button">‹</button>
+                <div class="image-wrapper">
+                    <img src="imagens/foto9.jpeg" alt="Meu presente" id="gallery-image">
+                    <p class="caption" id="caption-text">Feliz anivésário Vida 🎉, +1,...</p>
+                </div>
+                <button class="nav-button" id="next-button">›</button>
+            </div>
+
+            <div class="poem-section">
+                <button id="poem-button">☀️ Abrir um Poema Iluminado</button>
+            </div>
+
+            <div class="surprise-section">
+                <button id="surprise-button">Uma surpresa para você!</button>
+                <div class="surprise-message" id="surprise-message">
+                    <h2>Com todo o meu coração...</h2>
+                    <p>Cada dia ao seu lado é um presente. Estas fotos são apenas um pequeno lembrete de todos os momentos felizes que já vivemos e de todos que ainda vamos viver. Você é a luz que ilumina meus dias. Você é o meu sol!</p>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Feito com ❤️ por Gutuco: David</p>
+        </footer>
+    </div>
+
+    <div id="poem-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <div class="poem-text-container">
+                <p id="poem-text"></p>
+                <em id="poem-author"></em>
+            </div>
+            <button id="next-poem-button">Próximo Poema</button>
+        </div>
+    </div>
+
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+        // --- LÓGICA DA MÚSICA ---
+        let player;
+        window.onYouTubeIframeAPIReady = function() {
+            player = new YT.Player('player', {
+                height: '0',
+                width: '0',
+                videoId: 'CGbgoa3yP9I', // ID do vídeo "Dengo" de Anavitória
+                playerVars: {
+                    'autoplay': 0,
+                    'controls': 0,
+                    'loop': 1,
+                    'playlist': 'CGbgoa3yP9I' // Necessário para o loop funcionar
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            const overlay = document.getElementById('music-overlay');
+            overlay.addEventListener('click', () => {
+                if (player && typeof player.playVideo === 'function') {
+                    player.playVideo();
+                }
+                overlay.style.opacity = '0';
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                }, 500);
+            });
+
+            // --- LÓGICA DA GALERIA DE FOTOS ---
+            const photos = [
+                { src: 'imagens/foto9.jpeg', caption: 'A história começa com o nascimento do meu presente .' },
+                { src: 'imagens/foto8.jpeg', caption: 'A menina mais Divertida e doida de todos os tempos(Perfeita).' },
+                { src: 'imagens/foto1.jpg', caption: 'O sorriso mais lindo que ilumina meu dia.' },
+                { src: 'imagens/foto2.jpg', caption: 'Minha estrela, meu sol, meu farol.' },
+                { src: 'imagens/foto3.jpg', caption: 'Quero estar nas simplicidades do nosso amor.' },
+                { src: 'imagens/foto4.png', caption: 'Ou nos momentos de extravagância...' },
+                { src: 'imagens/foto5.jpg', caption: 'Sempre juntos, em todos os momentos.' },
+                { src: 'imagens/foto6.jpg', caption: 'Minha linda Modelo.' },
+                { src: 'imagens/foto7.jpg', caption: 'Uma girasol para o meu sol, para meu jardim de amor eterno.' }
+            ];
+            let currentPhotoIndex = 0;
+            const galleryImage = document.getElementById('gallery-image');
+            const captionText = document.getElementById('caption-text');
+            const prevButton = document.getElementById('prev-button');
+            const nextButton = document.getElementById('next-button');
+
+            function showImage(index) {
+                galleryImage.style.opacity = '0';
+                setTimeout(() => {
+                    galleryImage.src = photos[index].src;
+                    captionText.textContent = photos[index].caption;
+                    galleryImage.style.opacity = '1';
+                }, 500);
+            }
+
+            prevButton.addEventListener('click', () => {
+                currentPhotoIndex = (currentPhotoIndex > 0) ? currentPhotoIndex - 1 : photos.length - 1;
+                showImage(currentPhotoIndex);
+            });
+
+            nextButton.addEventListener('click', () => {
+                currentPhotoIndex = (currentPhotoIndex < photos.length - 1) ? currentPhotoIndex + 1 : 0;
+                showImage(currentPhotoIndex);
+            });
+            
+            // --- LÓGICA DA CAIXINHA DE POEMAS ---
+            const poems = [
+                { author: "Luís de Camões", text: `Amor é fogo que arde sem se ver;\nÉ ferida que dói, e não se sente;\nÉ um contentamento descontente;\nÉ dor que desatina sem doer.` },
+                { author: "Vinicius de Moraes", text: `Eu te amo porque te amo,\nNão precisas ser amante,\ne nem sempre sabes sê-lo.\nEu te amo porque te amo.\nAmor é estado de graça e com amor não se paga.` },
+                { author: "Pablo Neruda", text: `Quero fazer contigo\no que a primavera faz com as cerejeiras.` },
+                { author: "William Shakespeare", text: `Se te comparo a um dia de verão\nÉs por certo mais belo e mais ameno\nO vento espalha as flores de R maio\nE o verão finda cedo por demais.` },
+                { author: "Carlos Drummond de Andrade", text: `O amor é a coisa mais triste\nquando se desfaz.\nÉ a coisa mais alegre\nquando se faz.` },
+                { author: "Elizabeth Barrett Browning", text: `Amo-te com o amor que perdi\nCom os meus santos de antanho.\nAmo-te com o fôlego, sorrisos, lágrimas\nDe toda a minha vida! E, se Deus quiser, \nAinda mais te amarei depois da morte.` },
+                { author: "Fernando Pessoa", text: `Para ser grande, sê inteiro: nada\nTeu exagera ou exclui.\nSê todo em cada coisa. Põe quanto és\nNo mínimo que fazes.` },
+                { author: "Paul Éluard", text: `Eu te amo por todas as mulheres que não conheci\nEu te amo por todos os tempos que não vivi\nPelo cheiro do mar e pelo cheiro do pão quente\nPelo amor que é neve, por ti eu amo.` },
+                { author: "Antero de Quental", text: `O teu amor é uma estrela polar...\nNorte da minha vida, fanal que me conduz!\nSem ele, que seria? Um ponto a navegar\nNo mar do esquecimento, sem pátria e sem luz.` },
+                { author: "Hilda Hilst", text: `Porque há o outro. E porque te quero.\nE porque o amor é o que se prova.\nNão o que se diz.` },
+                { author: "Rumi", text: `Vem, senta-te comigo.\nTu, que és o meu ser, não fiques longe de mim.` },
+                { author: "Mário de Andrade", text: `O amor acaba. Isso é fato.\nO que eu sei é que seve ser muito bom\nter um amor na vida.` },
+                { author: "Sophia de Mello Breyner", text: `Prometo ser-te fiel, amar-te e respeitar-te,\nna alegria e na tristeza, na saúde e na doença,\ntodos os dias da nossa vida.` },
+                { author: "Goethe", text: `Tão perto de ti, amado!\nO sol se põe, em breve as estrelas brilharão para mim.\nOh, se tu estivesses aqui!` },
+                { author: "Júlio Dinis", text: `Amei-te pelo que eras, pelo que sonhavas;\namei-te no riso e na lágrima, na calma e na tempestade;\namei-te sempre, e sempre te amarei.` },
+                { author: "Vinicius de Moraes", text: `Que não seja imortal, posto que é chama\nMas que seja infinito enquanto dure.` }
+            ];
+            
+            let currentPoemIndex = 0;
+            const poemModal = document.getElementById('poem-modal');
+            const poemButton = document.getElementById('poem-button');
+            const closeButton = document.querySelector('.close-button');
+            const nextPoemButton = document.getElementById('next-poem-button');
+            const poemTextElem = document.getElementById('poem-text');
+            const poemAuthorElem = document.getElementById('poem-author');
+
+            function displayPoem(index) {
+                poemTextElem.innerText = poems[index].text;
+                poemAuthorElem.innerText = `– ${poems[index].author}`;
+            }
+
+            poemButton.addEventListener('click', () => {
+                currentPoemIndex = Math.floor(Math.random() * poems.length);
+                displayPoem(currentPoemIndex);
+                poemModal.style.display = 'flex';
+            });
+
+            closeButton.addEventListener('click', () => {
+                poemModal.style.display = 'none';
+            });
+
+            nextPoemButton.addEventListener('click', () => {
+                currentPoemIndex = (currentPoemIndex + 1) % poems.length;
+                displayPoem(currentPoemIndex);
+            });
+            
+            window.addEventListener('click', (event) => {
+                if (event.target == poemModal) {
+                    poemModal.style.display = 'none';
+                }
+            });
+
+            // --- LÓGICA DO BOTÃO SURPRESA ---
+            const surpriseButton = document.getElementById('surprise-button');
+            const surpriseMessage = document.getElementById('surprise-message');
+            surpriseButton.addEventListener('click', () => {
+                surpriseMessage.style.display = (surpriseMessage.style.display === 'block') ? 'none' : 'block';
+            });
+
+            // --- LÓGICA DOS ÍCONES CAINDO ---
+            function createFallingIcon() {
+                const icons = ['❤️', '🎉', '🎊', '🎈']; 
+                const element = document.createElement('div');
+                element.classList.add('heart');
+                element.textContent = icons[Math.floor(Math.random() * icons.length)];
+                element.style.left = Math.random() * 100 + 'vw';
+                element.style.animationDuration = Math.random() * 3 + 7 + 's';
+                document.body.appendChild(element);
+                setTimeout(() => { element.remove(); }, 10000);
+            }
+            
+            setInterval(createFallingIcon, 500);
+
+            showImage(currentPhotoIndex);
+        });
+    </script>
+</body>
+</html>
