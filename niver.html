@@ -210,58 +210,43 @@
             top: -10vh;
             font-size: 1.5rem;
             animation: fall 10s linear infinite;
-            z-index: 200; /* Para ficar acima do conteúdo, mas abaixo do modal */
+            z-index: -1;
             color: #fdd835;
             opacity: 0.8;
         }
         
-        /* ESTILOS PARA A TELA DE CONTAGEM REGRESSIVA */
-        #unlock-overlay {
+        #music-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             background: linear-gradient(135deg, #ffd700, #ffa500);
-            z-index: 300;
+            z-index: 200;
             display: flex;
             justify-content: center;
             align-items: center;
             flex-direction: column;
             text-align: center;
-            color: white;
-            transition: opacity 1s ease-out;
-        }
-
-        #unlock-overlay h2 {
-            font-family: 'Dancing Script', cursive;
-            font-size: 3rem;
-            text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+            transition: opacity 0.5s ease-out;
         }
         
-        #main-countdown {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 20px;
-        }
-        #main-countdown > div {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 15px 20px;
-            border-radius: 10px;
-        }
-        #main-countdown span {
-            display: block;
-        }
-        #main-countdown span:first-child {
-            font-size: 3.5rem;
-            font-weight: bold;
-        }
-        #main-countdown span:last-child {
-            font-size: 1rem;
-            text-transform: uppercase;
+        #music-overlay.ready {
+            cursor: pointer;
         }
 
+        #music-overlay h2 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3rem;
+            color: white;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+        }
+
+        #music-overlay p {
+            font-size: 1.2rem;
+            color: white;
+            margin-top: -10px;
+        }
 
         @keyframes fall {
             to { transform: translateY(110vh); }
@@ -275,18 +260,14 @@
 </head>
 <body>
 
-    <div id="unlock-overlay">
-        <h2>Uma surpresa será revelada em...</h2>
-        <div id="main-countdown">
-            <div><span id="hours">00</span><span>Horas</span></div>
-            <div><span id="minutes">00</span><span>Minutos</span></div>
-            <div><span id="seconds">00</span><span>Segundos</span></div>
-        </div>
+    <div id="music-overlay">
+        <h2>Feliz Aniversário!</h2>
+        <p id="music-status">Carregando a surpresa...</p>
     </div>
 
     <div id="player" style="display: none;"></div>
 
-    <div class="container" style="display: none;">
+    <div class="container">
         <header>
             <h1>Nosso Amor</h1>
             <p>Feliz anivésário Vida 🎉, +1,...</p>
@@ -333,72 +314,49 @@
 
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
+        // --- LÓGICA DA MÚSICA (VERSÃO CORRIGIDA) ---
         let player;
+        
+        // 1. A API do YouTube chama esta função global quando está pronta
         window.onYouTubeIframeAPIReady = function() {
             player = new YT.Player('player', {
                 height: '0',
                 width: '0',
                 videoId: 'dquAdxtMj2o', // ID do vídeo "Dengo" de Anavitória
-                playerVars: { 'controls': 0, 'loop': 1, 'playlist': 'dquAdxtMj2o' }
+                playerVars: {
+                    'autoplay': 0,
+                    'controls': 0,
+                    'loop': 1,
+                    'playlist': 'dquAdxtMj2o'
+                },
+                events: {
+                    // 2. Este evento é disparado quando o player está pronto para ser usado
+                    'onReady': onPlayerReady
+                }
             });
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
+        // 3. Esta função é executada assim que o player está pronto
+        function onPlayerReady(event) {
+            const overlay = document.getElementById('music-overlay');
+            const musicStatus = document.getElementById('music-status');
             
-            const overlay = document.getElementById('unlock-overlay');
-            const mainContainer = document.querySelector('.container');
-            const hoursEl = document.getElementById('hours');
-            const minutesEl = document.getElementById('minutes');
-            const secondsEl = document.getElementById('seconds');
-
-            function formatTime(time) {
-                return time < 10 ? `0${time}` : time;
-            }
-
-            function unlockWebsite() {
-                clearInterval(countdownInterval); // Para o contador
+            musicStatus.textContent = 'Clique para uma surpresa ❤️'; // Avisa que está pronto
+            overlay.classList.add('ready'); // Adiciona o cursor de clique
+            
+            // 4. Agora o clique está ativo e vai funcionar
+            overlay.addEventListener('click', () => {
+                player.playVideo();
                 overlay.style.opacity = '0';
                 setTimeout(() => {
                     overlay.style.display = 'none';
-                }, 1000);
+                }, 500);
+            }, { once: true }); // A opção "once: true" faz com que o clique só funcione uma vez
+        }
 
-                mainContainer.style.display = 'block';
-
-                // Inicia a música
-                if (player && typeof player.playVideo === 'function') {
-                    player.playVideo();
-                }
-                
-                // Inicia a chuva de ícones
-                setInterval(createFallingIcon, 500);
-                showImage(0); // Mostra a primeira imagem da galeria
-            }
-
-            function updateCountdown() {
-                const now = new Date();
-                const tomorrow = new Date();
-                tomorrow.setDate(now.getDate() + 1);
-                tomorrow.setHours(0, 0, 0, 0);
-
-                const totalSeconds = (tomorrow - now) / 1000;
-
-                if (totalSeconds <= 0) {
-                    unlockWebsite();
-                    return;
-                }
-
-                const hours = Math.floor(totalSeconds / 3600) % 24;
-                const minutes = Math.floor(totalSeconds / 60) % 60;
-                const seconds = Math.floor(totalSeconds) % 60;
-
-                hoursEl.innerText = formatTime(hours);
-                minutesEl.innerText = formatTime(minutes);
-                secondsEl.innerText = formatTime(seconds);
-            }
-
-            const countdownInterval = setInterval(updateCountdown, 1000);
-            updateCountdown();
-
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toda a lógica que manipula o DOM do site principal continua aqui
+            
             // --- LÓGICA DA GALERIA DE FOTOS ---
             const photos = [
                 { src: 'imagens/foto9.jpeg', caption: 'A história começa com o nascimento do meu presente .' },
@@ -450,7 +408,7 @@
                 { author: "Hilda Hilst", text: `Porque há o outro. E porque te quero.\nE porque o amor é o que se prova.\nNão o que se diz.` },
                 { author: "Rumi", text: `Vem, senta-te comigo.\nTu, que és o meu ser, não fiques longe de mim.` },
                 { author: "Mário de Andrade", text: `O amor acaba. Isso é fato.\nO que eu sei é que seve ser muito bom\nter um amor na vida.` },
-                { author: "Sophia de Mello Breyner", text: `Prometo ser-te fiel, amar-te e respeitar-te,\nna alegria e na tristeza, na saúde e na doença,\ntodos os dias da nossa vida.` },
+                { author: "Sophia de Mello Breynear", text: `Prometo ser-te fiel, amar-te e respeitar-te,\nna alegria e na tristeza, na saúde e na doença,\ntodos os dias da nossa vida.` },
                 { author: "Júlio Dinis", text: `Amei-te pelo que eras, pelo que sonhavas;\namei-te no riso e na lágrima, na calma e na tempestade;\namei-te sempre, e sempre te amarei.` },
                 { author: "Vinicius de Moraes", text: `Que não seja imortal, posto que é chama\nMas que seja infinito enquanto dure.` }
             ];
@@ -507,8 +465,11 @@
                 document.body.appendChild(element);
                 setTimeout(() => { element.remove(); }, 10000);
             }
+            
+            setInterval(createFallingIcon, 500);
+
+            showImage(currentPhotoIndex);
         });
     </script>
 </body>
 </html>
-
