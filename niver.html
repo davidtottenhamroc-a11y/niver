@@ -11,8 +11,8 @@
     <style>
         body {
             font-family: 'Playfair Display', serif;
-            background: linear-gradient(135deg, #ffd700, #ffa500); /* Amarelo ouro para laranja */
-            color: #5a3d00; /* Marrom escuro para contraste */
+            background: linear-gradient(135deg, #ffd700, #ffa500);
+            color: #5a3d00;
             margin: 0;
             padding: 20px;
             overflow-x: hidden;
@@ -32,7 +32,7 @@
             font-family: 'Dancing Script', cursive;
             font-size: 3.5rem;
             margin-bottom: 0;
-            color: #ff8c00; /* Laranja escuro */
+            color: #ff8c00;
         }
 
         header p {
@@ -82,7 +82,7 @@
         }
 
         .nav-button {
-            background-color: #ff8c00; /* Laranja escuro */
+            background-color: #ff8c00;
             color: white;
             border: none;
             border-radius: 50%;
@@ -96,7 +96,7 @@
         }
 
         .nav-button:hover {
-            background-color: #e67e00; /* Laranja mais escuro */
+            background-color: #e67e00;
             transform: scale(1.1);
         }
 
@@ -106,7 +106,7 @@
 
         #poem-button, #surprise-button {
             font-family: 'Playfair Display', serif;
-            background-color: #ff8c00; /* Laranja escuro */
+            background-color: #ff8c00;
             color: white;
             border: none;
             padding: 15px 30px;
@@ -117,7 +117,7 @@
         }
 
         #poem-button:hover, #surprise-button:hover {
-            background-color: #e67e00; /* Laranja mais escuro */
+            background-color: #e67e00;
             transform: translateY(-3px);
             box-shadow: 0 5px 10px rgba(0,0,0,0.2);
         }
@@ -126,8 +126,8 @@
             display: none;
             margin-top: 20px;
             padding: 20px;
-            background-color: #fffacd; /* Amarelo claro */
-            border: 2px dashed #ffb347; /* Laranja pastel */
+            background-color: #fffacd;
+            border: 2px dashed #ffb347;
             border-radius: 15px;
         }
 
@@ -147,20 +147,20 @@
         }
 
         .modal-content {
-            background-color: #fff8dc; /* Creme */
+            background-color: #fff8dc;
             margin: auto;
             padding: 30px;
-            border: 5px solid #ffecb3; /* Amarelo bem claro */
+            border: 5px solid #ffecb3;
             border-radius: 20px;
             width: 80%;
             max-width: 500px;
             text-align: center;
             position: relative;
-            box-shadow: 0 5px 25px rgba(255, 140, 0, 0.4); /* Sombra laranja */
+            box-shadow: 0 5px 25px rgba(255, 140, 0, 0.4);
         }
 
         .close-button {
-            color: #ff8c00; /* Laranja escuro */
+            color: #ff8c00;
             position: absolute;
             top: 10px;
             right: 20px;
@@ -180,14 +180,14 @@
             margin-top: 20px;
             font-size: 1.1rem;
             font-style: italic;
-            color: #e67e00; /* Laranja mais escuro */
+            color: #e67e00;
         }
 
         #next-poem-button {
             margin-top: 20px;
             background-color: transparent;
-            border: 2px solid #ff8c00; /* Laranja escuro */
-            color: #ff8c00; /* Laranja escuro */
+            border: 2px solid #ff8c00;
+            color: #ff8c00;
             padding: 10px 20px;
             border-radius: 20px;
             cursor: pointer;
@@ -195,7 +195,7 @@
         }
 
         #next-poem-button:hover {
-            background-color: #ff8c00; /* Laranja escuro */
+            background-color: #ff8c00;
             color: white;
         }
 
@@ -211,11 +211,10 @@
             font-size: 1.5rem;
             animation: fall 10s linear infinite;
             z-index: -1;
-            color: #fdd835; /* Amarelo vibrante para os corações */
+            color: #fdd835;
             opacity: 0.8;
         }
         
-        /* ESTILOS PARA A TELA DE ENTRADA DA MÚSICA */
         #music-overlay {
             position: fixed;
             top: 0;
@@ -227,10 +226,13 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            cursor: pointer;
             flex-direction: column;
             text-align: center;
             transition: opacity 0.5s ease-out;
+        }
+        
+        #music-overlay.ready {
+            cursor: pointer;
         }
 
         #music-overlay h2 {
@@ -260,11 +262,10 @@
 
     <div id="music-overlay">
         <h2>Feliz Aniversário!</h2>
-        <p>Clique para uma surpresa ❤️</p>
+        <p id="music-status">Carregando a surpresa...</p>
     </div>
 
     <div id="player" style="display: none;"></div>
-
 
     <div class="container">
         <header>
@@ -313,8 +314,10 @@
 
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
-        // --- LÓGICA DA MÚSICA ---
+        // --- LÓGICA DA MÚSICA (VERSÃO CORRIGIDA) ---
         let player;
+        
+        // 1. A API do YouTube chama esta função global quando está pronta
         window.onYouTubeIframeAPIReady = function() {
             player = new YT.Player('player', {
                 height: '0',
@@ -324,24 +327,36 @@
                     'autoplay': 0,
                     'controls': 0,
                     'loop': 1,
-                    'playlist': 'CGbgoa3yP9I' // Necessário para o loop funcionar
+                    'playlist': 'CGbgoa3yP9I'
+                },
+                events: {
+                    // 2. Este evento é disparado quando o player está pronto para ser usado
+                    'onReady': onPlayerReady
                 }
             });
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            
+        // 3. Esta função é executada assim que o player está pronto
+        function onPlayerReady(event) {
             const overlay = document.getElementById('music-overlay');
+            const musicStatus = document.getElementById('music-status');
+            
+            musicStatus.textContent = 'Clique para uma surpresa ❤️'; // Avisa que está pronto
+            overlay.classList.add('ready'); // Adiciona o cursor de clique
+            
+            // 4. Agora o clique está ativo e vai funcionar
             overlay.addEventListener('click', () => {
-                if (player && typeof player.playVideo === 'function') {
-                    player.playVideo();
-                }
+                player.playVideo();
                 overlay.style.opacity = '0';
                 setTimeout(() => {
                     overlay.style.display = 'none';
                 }, 500);
-            });
+            }, { once: true }); // A opção "once: true" faz com que o clique só funcione uma vez
+        }
 
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toda a lógica que manipula o DOM do site principal continua aqui
+            
             // --- LÓGICA DA GALERIA DE FOTOS ---
             const photos = [
                 { src: 'imagens/foto9.jpeg', caption: 'A história começa com o nascimento do meu presente .' },
@@ -393,7 +408,7 @@
                 { author: "Hilda Hilst", text: `Porque há o outro. E porque te quero.\nE porque o amor é o que se prova.\nNão o que se diz.` },
                 { author: "Rumi", text: `Vem, senta-te comigo.\nTu, que és o meu ser, não fiques longe de mim.` },
                 { author: "Mário de Andrade", text: `O amor acaba. Isso é fato.\nO que eu sei é que seve ser muito bom\nter um amor na vida.` },
-                { author: "Sophia de Mello Breyner", text: `Prometo ser-te fiel, amar-te e respeitar-te,\nna alegria e na tristeza, na saúde e na doença,\ntodos os dias da nossa vida.` },
+                { author: "Sophia de Mello Breynear", text: `Prometo ser-te fiel, amar-te e respeitar-te,\nna alegria e na tristeza, na saúde e na doença,\ntodos os dias da nossa vida.` },
                 { author: "Júlio Dinis", text: `Amei-te pelo que eras, pelo que sonhavas;\namei-te no riso e na lágrima, na calma e na tempestade;\namei-te sempre, e sempre te amarei.` },
                 { author: "Vinicius de Moraes", text: `Que não seja imortal, posto que é chama\nMas que seja infinito enquanto dure.` }
             ];
@@ -457,5 +472,4 @@
         });
     </script>
 </body>
-
 </html>
